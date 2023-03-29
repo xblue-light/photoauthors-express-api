@@ -7,7 +7,10 @@ import { PasswordHash } from "../utils/PasswordHash";
 export class UserController {
     
     static getAll = async(req: Request, res: Response): Response<User> => {
+
         try {
+            // console.log("Look into req.user from user controller.");
+            // console.log(req.user)
             const userRepository = AppDataSource.getRepository(User);
             const users = await userRepository.find({
                 select: ["id", "username", "role"]
