@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { AppDataSource } from '../data-source'
 import { Photo } from '../entity/Photo'
 import { User } from '../entity/User'
+import { ERROR_MESSAGES } from '../utils/errorMessages'
 
 export class PhotoController {
   static createNewPhoto = async (
@@ -45,7 +46,11 @@ export class PhotoController {
 
       return res.status(200).send(photo)
     } catch (error) {
-      res.status(404).send('Your request could not be processed!')
+      return res.status(404).send({
+        error: {
+          message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+        },
+      })
     }
   }
 
@@ -66,7 +71,11 @@ export class PhotoController {
 
       return res.status(200).send(user)
     } catch (error) {
-      res.status(404).send('Your request could not be processed!')
+      return res.status(404).send({
+        error: {
+          message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+        },
+      })
     }
   }
 
@@ -92,7 +101,11 @@ export class PhotoController {
       await ur.save(user)
       res.status(200).send(updatedPhoto)
     } catch (error) {
-      res.status(404).send('Your request could not be processed!')
+      return res.status(404).send({
+        error: {
+          message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+        },
+      })
     }
   }
 
@@ -112,7 +125,11 @@ export class PhotoController {
 
       return res.status(200).send('OK!')
     } catch (error) {
-      return res.status(404).send('Photo was not found!')
+      return res.status(404).send({
+        error: {
+          message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+        },
+      })
     }
   }
 }
