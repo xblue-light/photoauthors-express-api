@@ -1,0 +1,189 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Authentication API",
+    "description": "API for authentication"
+  },
+  "basePath": "/",
+  "schemes": ["http", "https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "tags": [
+    {
+      "name": "AuthenticationController",
+      "description": "Endpoints for user authentication"
+    },
+    {
+      "name": "PhotoController",
+      "description": "Endpoints for user authentication"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Authenticate user and generate JWT token",
+        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "credentials",
+            "description": "User credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Credentials"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "schema": {
+              "$ref": "#/definitions/JwtToken"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/changePassword": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Change user password",
+        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "passwords",
+            "description": "Old and new passwords along with username",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PasswordChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "schema": {
+              "$ref": "#/definitions/OkResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/new": {
+      "post": {
+        "summary": "Create a new photo",
+        "description": "Creates a new photo with the specified details",
+        "tags": ["Photo"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The details of the new photo",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "filename": {
+                    "type": "string"
+                  },
+                  "views": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "isPublished": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The newly created photo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Photo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Credentials": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "User's username"
+        },
+        "password": {
+          "type": "string",
+          "description": "User's password"
+        }
+      }
+    },
+    "PasswordChange": {
+      "type": "object",
+      "properties": {
+        "oldPassword": {
+          "type": "string",
+          "description": "User's current password"
+        },
+        "newPassword": {
+          "type": "string",
+          "description": "User's new password"
+        },
+        "username": {
+          "type": "string",
+          "description": "User's username"
+        }
+      }
+    },
+    "JwtToken": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "JWT token"
+        }
+      }
+    },
+    "OkResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Response message"
+        }
+      }
+    }
+  }
+}
