@@ -44,7 +44,7 @@ export class AuthController {
       }
 
       // Sign JWT, valid for 1 hour
-      const token = jwt.sign(
+      const accessToken = jwt.sign(
         {
           userId: user.id,
           username: user.username,
@@ -56,7 +56,9 @@ export class AuthController {
       );
 
       // Send the jwt in the response
-      res.send(token);
+      res.status(200).send({
+        accessToken,
+      });
     } catch (error) {
       res.status(401).send({
         error: error,

@@ -4,30 +4,36 @@ import { checkJWT } from '../middleware/checkJWT';
 import { checkRole } from '../middleware/checkRole';
 
 const routes: Router = Router();
-routes.get(
+
+// Create new post
+routes.post(
   '/new',
   [checkJWT, checkRole(['ADMIN'])],
   PhotoController.createNewPhoto,
 );
 
+// Get all photos by userId
 routes.get(
   '/getAll',
   [checkJWT, checkRole(['ADMIN'])],
   PhotoController.getAllPhotos,
 );
 
-routes.put(
-  '/update/:id',
-  [checkJWT, checkRole(['ADMIN'])],
-  PhotoController.updateDescription,
-);
-
+// Update photo details by photoId
 routes.patch(
   '/update/:photoId',
   [checkJWT, checkRole(['ADMIN'])],
   PhotoController.updatePartial,
 );
 
+// Update a photos metadata details by photoId
+routes.patch(
+  '/update/metadata/:photoId',
+  [checkJWT, checkRole(['ADMIN'])],
+  PhotoController.updateMetaData,
+);
+
+// Delete a photo by photoId
 routes.delete(
   '/delete/:photoId',
   [checkJWT, checkRole(['ADMIN'])],

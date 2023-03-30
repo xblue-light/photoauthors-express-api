@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Photo } from '../entity/Photo';
+import { PhotoMetadata } from '../entity/PhotoMetadata';
 import { User } from '../entity/User';
 import { ERROR_MESSAGES } from '../utils/errorMessages';
 
@@ -11,6 +12,8 @@ export class PhotoController {
   ): Response<Photo> => {
     try {
       const ur = AppDataSource.getRepository(User);
+      const pr = AppDataSource.getRepository(Photo);
+
       // get user.id
       const userId = req.user.userId;
 
@@ -22,7 +25,8 @@ export class PhotoController {
       });
 
       // Extract photo payload from req.body
-      const { name, description, filename, views, isPublished } = req.body;
+      const { name, description, filename, views, isPublished, metadata } =
+        req.body;
 
       // Add some photos
       const photo = new Photo();
@@ -32,11 +36,22 @@ export class PhotoController {
       photo.views = views;
       photo.isPublished = isPublished;
 
+      const metaData = new PhotoMetadata();
+      metaData.comment = metadata.comment;
+      metaData.compressed = metadata.compressed;
+      metaData.height = metadata.height;
+      metaData.orientation = metadata.orientation;
+      metaData.width = metadata.width;
+
+      // attach metadata to the photo entity
+      photo.metadata = metadata;
+
       user.photos = [...user.photos, photo];
 
       // TODO: create userDTO for User entity
-      // update user.photos
-      ur.save(user);
+      console.log('Saving photo with metadata: ', photo);
+      await ur.save(user); // here its enough to save the user so we dont need to explicitly save the photo since User#photos has cascade
+      //await pr.save(photo);
 
       return res.status(200).send(photo);
     } catch (error) {
@@ -53,17 +68,19 @@ export class PhotoController {
     res: Response,
   ): Response<Photo[]> => {
     try {
-      const ur = AppDataSource.getRepository(User);
-      // get user.id
+      const photoRepository = AppDataSource.getRepository(Photo);
       const userId = req.user.userId;
-      const user = await ur.findOne({
-        relations: ['photos'],
+
+      const userPhotos = await photoRepository.find({
+        relations: ['metadata'],
         where: {
-          id: userId, // where the id is of the author. expecting three 3 photos connected to this single author
+          user: {
+            id: userId,
+          },
         },
       });
 
-      return res.status(200).send(user);
+      return res.status(200).send(userPhotos);
     } catch (error) {
       return res.status(404).send({
         error: {
@@ -110,17 +127,17 @@ export class PhotoController {
   static updatePartial = async (req: Request, res: Response): Response<any> => {
     try {
       const qb = AppDataSource.getRepository(Photo).createQueryBuilder();
-      const updatedPhotoPayloadObj: Partial<Photo> = req.body;
+      const photoPayload: Partial<Photo> = req.body;
 
-      if (Object.keys(updatedPhotoPayloadObj).length !== 0) {
+      if (Object.keys(photoPayload).length !== 0) {
         await qb
           .update(Photo)
-          .set({ ...updatedPhotoPayloadObj })
+          .set({ ...photoPayload })
           .where('id = :id', { id: req.params.photoId })
           .execute();
       }
 
-      res.status(200).send(updatedPhotoPayloadObj);
+      res.status(200).send(photoPayload);
     } catch (error) {
       return res.status(404).send(error);
     }
@@ -147,6 +164,28 @@ export class PhotoController {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
       });
+    }
+  };
+
+  static updateMetaData = async (
+    req: Request,
+    res: Response,
+  ): Response<any> => {
+    try {
+      const qb = AppDataSource.getRepository(Photo).createQueryBuilder();
+      const metaDataPayload: Partial<Photo> = req.body;
+
+      if (Object.keys(metaDataPayload).length !== 0) {
+        await qb
+          .update(PhotoMetadata)
+          .set({ ...metaDataPayload })
+          .where('photoId = :id', { id: req.params.photoId })
+          .execute();
+      }
+
+      res.status(200).send(metaDataPayload);
+    } catch (error) {
+      return res.status(404).send(error);
     }
   };
 }
