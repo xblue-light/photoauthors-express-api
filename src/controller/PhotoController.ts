@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Photo } from '../entity/Photo';
 import { User } from '../entity/User';
