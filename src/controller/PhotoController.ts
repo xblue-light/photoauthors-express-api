@@ -53,7 +53,7 @@ export class PhotoController {
       await ur.save(user); // here its enough to save the user so we dont need to explicitly save the photo since User#photos has cascade
       //await pr.save(photo);
 
-      return res.status(200).send(photo);
+      return res.status(201).send(photo);
     } catch (error) {
       return res.status(404).send({
         error: {
@@ -124,20 +124,22 @@ export class PhotoController {
     }
   };
 
-  static updatePartial = async (req: Request, res: Response): Response<any> => {
+  static updatePartial = async (
+    req: Request,
+    res: Response,
+  ): Response<{ status: string }> => {
     try {
-      const qb = AppDataSource.getRepository(Photo).createQueryBuilder();
-      const photoPayload: Partial<Photo> = req.body;
+      const pr = AppDataSource.getRepository(Photo);
+      const payload: Partial<Photo> = req.body;
 
-      if (Object.keys(photoPayload).length !== 0) {
-        await qb
-          .update(Photo)
-          .set({ ...photoPayload })
-          .where('id = :id', { id: req.params.photoId })
-          .execute();
-      }
+      await pr
+        .createQueryBuilder()
+        .update(Photo)
+        .set({ ...payload })
+        .where('id = :id', { id: req.params.photoId })
+        .execute();
 
-      res.status(200).send(photoPayload);
+      res.status(200).send({ status: 'Successfully updated resource.' });
     } catch (error) {
       return res.status(404).send(error);
     }
@@ -147,17 +149,19 @@ export class PhotoController {
     try {
       const pr = AppDataSource.getRepository(Photo);
       // Find the photo we want to delete
+
       const photo = await pr.findOneOrFail({
-        relations: ['user'],
         where: {
           id: req.params.photoId,
         },
       });
 
+      console.log(photo);
+
       // Delete the photo from the DB
       await pr.delete(photo);
 
-      return res.status(200).send('OK!');
+      res.status(200).send({ status: 'Successfully deleted resource.' });
     } catch (error) {
       return res.status(404).send({
         error: {
