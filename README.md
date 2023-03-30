@@ -1,6 +1,6 @@
-# Project Name
+# Unsplash API
 
-Short project description goes here.
+This is a minimalistic Express.js application leveraging TypeORM and TS.
 
 ## Table of Contents
 
@@ -34,14 +34,28 @@ This API follows the RESTful API design principles and utilizes the following HT
 
 List the resources available in the API and their descriptions.
 
-#### Resource Name
+#### Photo Controller
 
-| Method | Endpoint        | Description       |
-| ------ | --------------- | ----------------- |
-| GET    | `/resource`     | Retrieve resource |
-| POST   | `/resource`     | Create resource   |
-| PUT    | `/resource/:id` | Update resource   |
-| DELETE | `/resource/:id` | Delete resource   |
+| Method | Endpoint           | Description         |
+| ------ | ------------------ | ------------------- |
+| GET    | `/getAll`          | Retrieve all photos |
+| POST   | `/new`             | Create resource     |
+| PUT    | `/update/:photoId` | Update resource     |
+| DELETE | `/delete/:photoId` | Delete resource     |
+
+#### Auth Controller
+
+| Method | Endpoint       | Description                |
+| ------ | -------------- | -------------------------- |
+| POST   | `/login`       | Login with user creds      |
+| POST   | `/newPassword` | Change user password login |
+
+#### User Controller
+
+| Method | Endpoint  | Description     |
+| ------ | --------- | --------------- |
+| GET    | `/all`    | Get all users   |
+| POST   | `/create` | Create new user |
 
 ### Authentication
 
