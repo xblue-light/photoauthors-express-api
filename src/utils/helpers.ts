@@ -1,19 +1,22 @@
-import { JwtPayload } from "jsonwebtoken";
-import moment = require("moment");
+import { JwtPayload } from 'jsonwebtoken'
+import moment = require('moment')
 
 export const isTokenExpired = (decodedToken: JwtPayload): boolean => {
-    if(moment().isAfter(decodedToken.exp)) {
-        // The isAfter() method checks if the current time (i.e., moment()) is after the expiryDate of the refreshToken
-        // If it is, then the token has expired, and the method returns true
-        console.log("The current time is after the expiry date. The refresh token is NOT valid!");
-        return true
-    }
-    else {
-        // Otherwise, if the current time is before the expiryDate, 
-        // then the method returns false, indicating that the token is still valid.
-        console.log("The current time is before expiry date. The refresh token is still valid!");
-        return false;
-    }
+  if (moment().isAfter(decodedToken.exp)) {
+    // The isAfter() method checks if the current time (i.e., moment()) is after the expiryDate of the refreshToken
+    // If it is, then the token has expired, and the method returns true
+    console.log(
+      'The current time is after the expiry date. The refresh token is NOT valid!'
+    )
+    return true
+  } else {
+    // Otherwise, if the current time is before the expiryDate,
+    // then the method returns false, indicating that the token is still valid.
+    console.log(
+      'The current time is before expiry date. The refresh token is still valid!'
+    )
+    return false
+  }
 }
 
 // Here's an example code snippet that shows how to format the current time as a Unix timestamp using Moment.js:
