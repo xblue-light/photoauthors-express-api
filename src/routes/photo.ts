@@ -8,7 +8,7 @@ const routes: Router = Router();
 // Create new post
 routes.post(
   '/new',
-  [checkJWT, checkRole(['ADMIN'])],
+  [checkJWT, checkRole(['ADMIN', 'SUPER_USER'])],
   PhotoController.createNewPhoto,
 );
 
@@ -28,21 +28,21 @@ routes.get(
 // Update photo details by photoId
 routes.patch(
   '/update/:photoId',
-  [checkJWT, checkRole(['ADMIN'])],
+  [checkJWT, checkRole(['ADMIN', 'SUPER_USER'])],
   PhotoController.updatePartial,
 );
 
 // Update a photos metadata details by photoId
 routes.patch(
   '/update/metadata/:photoId',
-  [checkJWT, checkRole(['ADMIN'])],
+  [checkJWT, checkRole(['ADMIN', 'SUPER_USER'])],
   PhotoController.updateMetaData,
 );
 
 // Delete a photo by photoId
 routes.delete(
   '/delete/:photoId',
-  [checkJWT, checkRole(['ADMIN'])],
+  [checkJWT, checkRole(['ADMIN', 'SUPER_USER'])],
   PhotoController.delete,
 );
 
