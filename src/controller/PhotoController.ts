@@ -46,7 +46,8 @@ export class PhotoController {
         album,
       } = req.body;
 
-      // // Add some photos
+      // Add some photos
+      // TODO: Add DTO
       const photo = new Photo();
       photo.name = name;
       photo.description = description;
@@ -55,6 +56,7 @@ export class PhotoController {
       photo.isPublished = isPublished;
 
       const metaData = new PhotoMetadata();
+      // TODO: Add DTO
       metaData.comment = metadata.comment;
       metaData.compressed = metadata.compressed;
       metaData.height = metadata.height;
@@ -66,6 +68,7 @@ export class PhotoController {
 
       // Add new album
       const newAlbum = new Album();
+      // TODO: Add DTO
       newAlbum.name = album.name; // from req.body
 
       // Save new album
@@ -94,7 +97,7 @@ export class PhotoController {
 
       res.status(200).send({ status: RESPONSE_STATUS.CREATED });
     } catch (error) {
-      return res.status(404).send({
+      res.status(404).send({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -112,9 +115,9 @@ export class PhotoController {
         relations: ['metadata', 'author', 'author.user', 'albums'],
       });
 
-      return res.status(200).send(userPhotos);
+      res.status(200).send(userPhotos);
     } catch (error) {
-      return res.status(404).send({
+      res.status(404).send({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -158,9 +161,9 @@ export class PhotoController {
         select: ['description', 'albums', 'filename', 'author', 'id', 'name'],
       });
 
-      return res.status(200).send(allPhotosByUserId);
+      res.status(200).send(allPhotosByUserId);
     } catch (error) {
-      return res.status(404).send({
+      res.status(404).send({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -184,7 +187,7 @@ export class PhotoController {
 
       res.status(200).send({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      return res.status(404).send({
+      res.status(404).send({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -205,7 +208,7 @@ export class PhotoController {
 
       res.status(200).send({ status: RESPONSE_STATUS.REMOVED });
     } catch (error) {
-      return res.status(404).send({
+      res.status(404).send({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -228,7 +231,7 @@ export class PhotoController {
 
       res.status(200).send({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      return res.status(404).send(error);
+      res.status(404).send(error);
     }
   };
 }
