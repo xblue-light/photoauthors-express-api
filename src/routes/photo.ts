@@ -14,8 +14,14 @@ routes.post(
 
 // Get all photos by userId
 routes.get(
+  '/getAll/:userId',
+  [checkJWT, checkRole(['SUPER_USER'])],
+  PhotoController.getAllPhotosByUserId,
+);
+
+routes.get(
   '/getAll',
-  [checkJWT, checkRole(['ADMIN'])],
+  [checkJWT, checkRole(['SUPER_USER'])],
   PhotoController.getAllPhotos,
 );
 

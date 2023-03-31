@@ -16,6 +16,7 @@ export class AuthController {
       let { username, password } = req.body;
 
       if (!(username && password)) {
+        console.log('not found!');
         res.sendStatus(400);
       }
 

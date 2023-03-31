@@ -4,9 +4,14 @@ import {
   Column,
   Unique,
   OneToMany,
+  OneToOne,
+  UpdateDateColumn,
+  CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Length, IsNotEmpty } from 'class-validator';
 import { Photo } from './Photo';
+import { Author } from './Author';
 
 @Entity()
 @Unique(['username'])
@@ -35,9 +40,12 @@ export class User {
   // @UpdateDateColumn()
   // updatedAt: Date;
 
-  @OneToMany(() => Photo, (photo) => photo.user, {
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToOne((type) => Author, (author) => author.user, {
     cascade: true,
-    //eager: false,
   })
-  photos: Photo[];
+  author: Author;
 }

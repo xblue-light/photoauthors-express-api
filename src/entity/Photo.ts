@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Album } from './Album';
 import { Author } from './Author';
 import { PhotoMetadata } from './PhotoMetadata';
 import { User } from './User';
@@ -40,6 +42,9 @@ export class Photo {
   @ManyToOne(() => Author, (author) => author.photos)
   author: Author;
 
-  @ManyToOne(() => User, (user) => user.photos)
-  user: User;
+  @ManyToMany(() => Album, (album) => album.photos)
+  albums: Array<Album>;
+
+  // @ManyToOne(() => User, (user) => user.photos)
+  // user: User;
 }

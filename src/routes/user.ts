@@ -9,7 +9,7 @@ const userRoutes: Router = Router();
 userRoutes.get('/all', [checkJWT, checkRole(['ADMIN'])], UserController.getAll);
 userRoutes.post(
   '/create',
-  [checkJWT, checkRole(['ADMIN'])],
+  //[checkRole(['ADMIN'])],
   UserController.newUser,
 );
 

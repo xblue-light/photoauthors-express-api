@@ -1,9 +1,10 @@
-import 'reflect-metadata'
-import { DataSource } from 'typeorm'
-import { Author } from './entity/Author'
-import { Photo } from './entity/Photo'
-import { PhotoMetadata } from './entity/PhotoMetadata'
-import { User } from './entity/User'
+import 'reflect-metadata';
+import { DataSource } from 'typeorm';
+import { Album } from './entity/Album';
+import { Author } from './entity/Author';
+import { Photo } from './entity/Photo';
+import { PhotoMetadata } from './entity/PhotoMetadata';
+import { User } from './entity/User';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DATABASE,
   synchronize: true,
   logging: false,
-  entities: [User, Author, Photo, PhotoMetadata],
+  entities: [User, Author, Photo, PhotoMetadata, Album],
   migrations: [],
   subscribers: [],
-})
+});

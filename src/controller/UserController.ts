@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { User } from '../entity/User';
 import { validate } from 'class-validator';
 import { Bcrypt } from '../utils/Bcrypt';
+import { Author } from '../entity/Author';
 
 export class UserController {
   static getAll = async (req: Request, res: Response): Response<User> => {
@@ -19,8 +20,17 @@ export class UserController {
   static newUser = async (req: Request, res: Response): Response<User> => {
     try {
       const userRepository = AppDataSource.getRepository(User);
+      const authorRepository = AppDataSource.getRepository(Author);
       let { username, password, email, role } = req.body;
       let user = new User();
+
+      // if (!user.author) {
+      //   const newAuthor = new Author();
+      //   newAuthor.user = user;
+      //   user.author = newAuthor;
+      //   await authorRepository.save(newAuthor);
+      // }
+
       user.username = username;
       user.email = email;
       user.password = await Bcrypt.hashPassword(password);
