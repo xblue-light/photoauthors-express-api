@@ -1,5 +1,5 @@
-export enum ResponseStatus {
-  UPDATED = 'SUCCESS',
-  error = 'ERROR',
-  failed = 'FAILED',
+export enum RESPONSE_STATUS {
+  UPDATED = 'Successfully updated resource.',
+  REMOVED = 'Successfully removed resource.',
+  CREATED = 'Successfully created resource.',
 }
