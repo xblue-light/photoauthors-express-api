@@ -1,0 +1,14 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "jadensmith",
+  "password": "123pass123",
+  "database": "unsplashdb_dev",
+  "entities": ["src/**/*.entity{.ts,.js}"],
+  "migrations": ["src/migration/**/*.ts"],
+  "cli": {
+    "migrationsDir": "src/migrations",
+    "entitiesDir": "src/entity"
+  }
+}

@@ -67,7 +67,17 @@ If rate limiting is implemented, explain the rate limiting policy.
 
 ## Database Schema
 
-Describe the database schema used in the application. You can use diagrams, text, or both to describe the schema.
+### TypeORM Migrations
+
+In TypeORM, `migration:create` and `migration:generate` are two commands used to create new migration files, but they differ in how they generate the file.
+
+`migration:create` creates an empty migration file with a timestamp and a name you provide, whereas `migration:generate` generates a migration file based on changes detected in your database schema.
+
+Here are the key differences between the two commands:
+
+`migration:create` creates a blank migration file with no content, so you need to manually add the code to modify your database schema. This command is useful if you want to create a migration file from scratch.
+
+`migration:generate` generates a migration file based on the current state of your database schema. TypeORM compares the current schema with the previous schema and generates a migration file that contains the necessary SQL statements to update the schema. This command is useful if you've made changes to your database schema and want to generate a migration file to apply those changes.
 
 ## License
 

@@ -61,7 +61,7 @@ export class PhotoController {
       metaData.orientation = metadata.orientation;
       metaData.width = metadata.width;
 
-      // attach metadata to the photo entity
+      // Attach metadata to the photo entity
       photo.metadata = metadata;
 
       // Add new album
@@ -69,22 +69,28 @@ export class PhotoController {
       newAlbum.name = album.name; // from req.body
 
       // Save new album
-      await this.albumRepository.save(newAlbum);
+      await this.albumRepository.insert(newAlbum);
 
-      // attach album/s to the photo entity
+      // Attach album/s to the photo entity
       photo.albums = [newAlbum];
 
       if (!user.author) {
         const newAuthor = new Author();
         newAuthor.name = author.name || 'N/A';
         newAuthor.photos = [photo];
-        user.author = newAuthor; // here we connect the user with a new author hence userId will be a foreign key in author tbale
-        await this.userRepository.save(user); // here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
+        user.author = newAuthor; // Here we connect the user with a new author hence userId will be a foreign key in author table
+
+        await this.userRepository.update(userId, {
+          author: newAuthor,
+        });
+
         res.status(201).send(user);
       }
 
       user.author.photos = [...user.author.photos, photo];
-      await this.userRepository.save(user); // here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
+
+      // Here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
+      await this.userRepository.save(user);
 
       res.status(200).send({ status: RESPONSE_STATUS.CREATED });
     } catch (error) {
@@ -140,19 +146,19 @@ export class PhotoController {
       //   }),
       // );
 
-      const userPhotos = await this.photoRepository.find({
+      const allPhotosByUserId = await this.photoRepository.find({
         relations: ['metadata', 'author', 'author.user', 'albums'],
         where: {
           author: {
             user: {
-              id: req.params.userId, // User ID from middleware or we can access userId from the req.params.userId
+              id: req.params.userId,
             },
           },
         },
         select: ['description', 'albums', 'filename', 'author', 'id', 'name'],
       });
 
-      return res.status(200).send(userPhotos);
+      return res.status(200).send(allPhotosByUserId);
     } catch (error) {
       return res.status(404).send({
         error: {
