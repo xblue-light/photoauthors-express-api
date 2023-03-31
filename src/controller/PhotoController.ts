@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
+import { Album } from '../entity/Album';
 import { Author } from '../entity/Author';
 import { Photo } from '../entity/Photo';
 import { PhotoMetadata } from '../entity/PhotoMetadata';
@@ -12,6 +13,8 @@ export class PhotoController {
     res: Response,
   ): Response<Photo> => {
     try {
+      const albumRepository = AppDataSource.getRepository(Album);
+
       const ur = AppDataSource.getRepository(User);
       const ar = AppDataSource.getRepository(Author);
       const pr = AppDataSource.getRepository(Photo);
@@ -37,6 +40,7 @@ export class PhotoController {
         isPublished,
         metadata,
         author,
+        album,
       } = req.body;
 
       // // Add some photos
@@ -57,10 +61,20 @@ export class PhotoController {
       // attach metadata to the photo entity
       photo.metadata = metadata;
 
+      // Add new album
+      const newAlbum = new Album();
+      newAlbum.name = album.name; // from req.body
+
+      // Save new album
+      await albumRepository.save(newAlbum);
+
+      // attach album/s to the photo entity
+      photo.albums = [newAlbum];
+
       if (!user.author) {
         console.log('create new author!');
         const newAuthor = new Author();
-        newAuthor.name = 'N/A';
+        newAuthor.name = 'N/A'; //TODO: add author name from req.body
         console.log(newAuthor);
         newAuthor.photos = [photo];
         user.author = newAuthor; // here we connect the user with a new author hence userId will be a foreign key in author tbale
@@ -70,7 +84,7 @@ export class PhotoController {
       }
 
       user.author.photos = [...user.author.photos, photo];
-      await ur.save(user);
+      await ur.save(user); // here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
 
       res.status(201).send('Resource was created successfully!');
     } catch (error) {
@@ -82,33 +96,6 @@ export class PhotoController {
     }
   };
 
-  static createNewPhotos = async (
-    req: Request,
-    res: Response,
-  ): Response<Photo[]> => {
-    const ur = AppDataSource.getRepository(User); //todo: autor entity
-    const ar = AppDataSource.getRepository(Author); //todo: autor entity
-    const pr = AppDataSource.getRepository(Photo);
-
-    // get user.id
-    const userId = req.user.userId;
-
-    const user = await ur.findOneOrFail({
-      relations: ['photos'],
-      where: {
-        id: userId,
-      },
-    });
-
-    // Extract photo payload from req.body
-    const payload = req.body; // []
-
-    try {
-    } catch (error) {
-      res.status(404).send(ERROR_MESSAGES.REQUEST_NOT_FOUND);
-    }
-  };
-
   static getAllPhotos = async (
     req: Request,
     res: Response,
@@ -116,9 +103,9 @@ export class PhotoController {
     try {
       const photoRepository = AppDataSource.getRepository(Photo);
 
-      // This will load all the user photos for all the users in the DB.
+      // This will load all the user photos for all the users in the DB and all the photo entity relations.
       const userPhotos = await photoRepository.find({
-        relations: ['metadata', 'author', 'author.user'],
+        relations: ['metadata', 'author', 'author.user', 'albums'],
       });
 
       return res.status(200).send(userPhotos);

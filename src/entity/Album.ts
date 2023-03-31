@@ -12,6 +12,9 @@ export class Album {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  name: string;
+
   @ManyToMany(() => Photo, (photo) => photo.albums)
   @JoinTable()
   photos: Photo[];
