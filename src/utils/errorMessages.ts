@@ -5,6 +5,6 @@ export enum ERROR_MESSAGES {
   PERMISSION_DENIED = 'Permission Denied: You do not have the required permissions to access this resource.',
   AUTH_FAILED = 'Authentication Failed: Your username or password is incorrect. Please try again or reset your password',
   USER_NOT_FOUND = "User Not Found: We couldn't find an account with the provided username or email address.",
-  INVALID_CREDS = 'Invalid Credentials: The username or password you provided is incorrect. Please try again with the correct credentials.',
+  INVALID_CREDS = 'Invalid Credentials: Please try again with the correct credentials.',
   REQUEST_NOT_FOUND = 'Error: The requested record was not found.',
 }

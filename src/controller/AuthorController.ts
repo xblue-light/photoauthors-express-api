@@ -2,6 +2,7 @@ import { AppDataSource } from '../data-source';
 import { Request, Response } from 'express';
 import { User } from '../entity/User';
 import { Author } from '../entity/Author';
+import { ERROR_MESSAGES } from '../utils/errorMessages';
 
 export class AuthorController {
   static newAuthor = async (req: Request, res: Response): Response<Author> => {
@@ -16,17 +17,24 @@ export class AuthorController {
       });
 
       if (!user.author) {
-        console.log('Creating new author...');
         const newAuthor = new Author();
         newAuthor.name = req.body.author.name;
         user.author = newAuthor; // connect the one-to-one relationship with user and author
         await userRepository.save(user); // here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
-        return res.status(201).send(user);
+        res.status(201).json(user);
       } else {
-        return res.status(404).send('user author exists already');
+        res.status(404).json({
+          error: {
+            message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+          },
+        });
       }
-    } catch (error) {
-      return res.status(404).send(error);
+    } catch (err) {
+      res.status(401).json({
+        error: {
+          message: ERROR_MESSAGES.ACCESS_DENIED,
+        },
+      });
     }
   };
 
@@ -34,26 +42,29 @@ export class AuthorController {
     req: Request,
     res: Response,
   ): Response<Author> => {
-    console.log(req.user);
-    const userRepository = AppDataSource.getRepository(User);
-    const { userId } = req.user;
+    try {
+      const userRepository = AppDataSource.getRepository(User);
+      const { userId } = req.user;
 
-    const user = await userRepository.findOneOrFail({
-      relations: ['author', 'author.photos'],
-      where: {
-        id: userId,
-      },
-    });
+      const user = await userRepository.findOneOrFail({
+        relations: ['author', 'author.photos'],
+        where: {
+          id: userId,
+        },
+      });
 
-    console.log('user.author before:', user.author);
+      if (user.author) {
+        user.author.name = req.body.author.name;
+        await userRepository.save(user);
+      }
 
-    if (user.author) {
-      console.log('Updating author name...');
-      user.author.name = req.body.author.name;
-      console.log('user.author after:', user.author);
-      await userRepository.save(user);
+      res.status(201).json(user.author);
+    } catch (error) {
+      res.status(401).json({
+        error: {
+          message: ERROR_MESSAGES.ACCESS_DENIED,
+        },
+      });
     }
-
-    return res.status(201).send(user.author);
   };
 }

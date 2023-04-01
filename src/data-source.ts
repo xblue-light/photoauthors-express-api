@@ -9,12 +9,12 @@ import { User } from './entity/User';
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.POSTGRES_HOSTNAME,
-  port: 5432,
   username: process.env.POSTGRES_USERNAME,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DATABASE,
-  synchronize: false,
-  logging: true,
+  port: 5432,
+  synchronize: false, // Leave false when working with TypeORM migrations
+  logging: false,
   entities: [User, Author, Photo, PhotoMetadata, Album],
   migrations: ['src/migration/**/*.ts'],
   subscribers: [],

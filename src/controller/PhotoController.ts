@@ -79,7 +79,7 @@ export class PhotoController {
 
       if (!user.author) {
         const newAuthor = new Author();
-        newAuthor.name = author.name || 'N/A';
+        newAuthor.name = author.name;
         newAuthor.photos = [photo];
         user.author = newAuthor; // Here we connect the user with a new author hence userId will be a foreign key in author table
 
@@ -87,7 +87,7 @@ export class PhotoController {
           author: newAuthor,
         });
 
-        res.status(201).send(user);
+        res.status(201).json(user);
       }
 
       user.author.photos = [...user.author.photos, photo];
@@ -95,9 +95,9 @@ export class PhotoController {
       // Here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
       await this.userRepository.save(user);
 
-      res.status(200).send({ status: RESPONSE_STATUS.CREATED });
+      res.status(200).json({ status: RESPONSE_STATUS.CREATED });
     } catch (error) {
-      res.status(404).send({
+      res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -115,9 +115,9 @@ export class PhotoController {
         relations: ['metadata', 'author', 'author.user', 'albums'],
       });
 
-      res.status(200).send(userPhotos);
+      res.status(200).json(userPhotos);
     } catch (error) {
-      res.status(404).send({
+      res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -161,9 +161,9 @@ export class PhotoController {
         select: ['description', 'albums', 'filename', 'author', 'id', 'name'],
       });
 
-      res.status(200).send(allPhotosByUserId);
-    } catch (error) {
-      res.status(404).send({
+      res.status(200).json(allPhotosByUserId);
+    } catch (err) {
+      res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -176,18 +176,18 @@ export class PhotoController {
     res: Response,
   ): Response<{ status: string }> => {
     try {
-      const payload: Partial<Photo> = req.body;
+      const photoPayload: Partial<Photo> = req.body;
 
       await this.photoRepository
         .createQueryBuilder()
         .update(Photo)
-        .set({ ...payload })
+        .set({ ...photoPayload })
         .where('id = :id', { id: req.params.photoId })
         .execute();
 
-      res.status(200).send({ status: RESPONSE_STATUS.UPDATED });
+      res.status(200).json({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      res.status(404).send({
+      res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -206,9 +206,9 @@ export class PhotoController {
       // Delete the photo from the DB
       await this.photoRepository.delete(photo);
 
-      res.status(200).send({ status: RESPONSE_STATUS.REMOVED });
+      res.status(200).json({ status: RESPONSE_STATUS.REMOVED });
     } catch (error) {
-      res.status(404).send({
+      res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -229,9 +229,13 @@ export class PhotoController {
         .where('photoId = :id', { id: req.params.photoId })
         .execute();
 
-      res.status(200).send({ status: RESPONSE_STATUS.UPDATED });
+      res.status(200).json({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      res.status(404).send(error);
+      res.status(404).json({
+        error: {
+          message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
+        },
+      });
     }
   };
 }

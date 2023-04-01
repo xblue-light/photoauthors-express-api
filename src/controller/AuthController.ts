@@ -7,7 +7,7 @@ import {
   ACCESS_TOKEN_EXPIRATION_TIME,
   ACCESS_TOKEN_SECRET,
 } from '../../config';
-import { validate } from 'class-validator';
+import { ERROR_MESSAGES } from '../utils/errorMessages';
 
 export class AuthController {
   static login = async (req: Request, res: Response) => {
@@ -16,14 +16,17 @@ export class AuthController {
       let { username, password } = req.body;
 
       if (!(username && password)) {
-        console.log('not found!');
-        res.sendStatus(400);
+        res.status(401).json({
+          error: {
+            message: ERROR_MESSAGES.INVALID_CREDS,
+          },
+        });
       }
 
-      // Get user from database
-      const userRepository = AppDataSource.getRepository(User);
       let user: User;
+      const userRepository = AppDataSource.getRepository(User);
 
+      // Get user from database
       user = await userRepository.findOne({
         where: {
           username,
@@ -31,7 +34,11 @@ export class AuthController {
       });
 
       if (!user) {
-        throw new Error('User not found!');
+        res.status(401).json({
+          error: {
+            message: ERROR_MESSAGES.ACCESS_DENIED,
+          },
+        });
       }
 
       // Validate if the hashed password and plain password from req.body match
@@ -41,7 +48,11 @@ export class AuthController {
       );
 
       if (!isPasswordValid) {
-        return res.status(401).send({ error: 'The password is not valid!' });
+        res.status(401).json({
+          error: {
+            message: ERROR_MESSAGES.INVALID_CREDS,
+          },
+        });
       }
 
       // Sign JWT, valid for 1 hour
@@ -56,27 +67,30 @@ export class AuthController {
         },
       );
 
-      // Send the jwt in the response
-      res.status(200).send({
+      // json the JWT in the response
+      res.status(200).json({
         accessToken,
       });
     } catch (error) {
-      res.status(401).send({
-        error: error,
+      res.status(401).json({
+        error: {
+          message: ERROR_MESSAGES.ACCESS_DENIED,
+        },
       });
     }
   };
 
   static changePassword = async (req: Request, res: Response) => {
     try {
-      // Get ID from JWT
-
       // Get parameters from the body
       const { oldPassword, newPassword, username } = req.body;
 
       if (!(oldPassword && newPassword)) {
-        res.status(400).send('Please provide oldPassword and newPassword');
-        return;
+        res.status(401).json({
+          error: {
+            message: ERROR_MESSAGES.INVALID_CREDS,
+          },
+        });
       }
 
       // Get user from the database
@@ -89,10 +103,6 @@ export class AuthController {
         },
       });
 
-      if (user) {
-        console.log('user found:', user);
-      }
-
       // Validate if the hashed password and plain password from req.body match
       const isPasswordValid = await Bcrypt.isPasswordValid(
         oldPassword,
@@ -100,29 +110,23 @@ export class AuthController {
       );
 
       if (!isPasswordValid) {
-        return res.status(401).send({ error: 'The password is not valid!' });
+        res.status(401).json({
+          error: {
+            message: ERROR_MESSAGES.INVALID_CREDS,
+          },
+        });
       }
 
       // Hash the new password and save
       user.password = await Bcrypt.hashPassword(newPassword);
 
-      // Validate model
-      const errors = await validate(user);
-
-      if (errors.length > 0) {
-        console.log('An error occured in the class-validator!');
-        res.status(400).send(errors);
-        return;
-      }
-
-      console.log('Saving user:', user);
-      userRepository.save(user);
-
-      res.status(200).send(user);
+      res.status(200).json(user);
     } catch (error) {
-      return res
-        .status(404)
-        .send('Error: something went wrong @112 AuthController');
+      res.status(401).json({
+        error: {
+          message: ERROR_MESSAGES.ACCESS_DENIED,
+        },
+      });
     }
   };
 }
