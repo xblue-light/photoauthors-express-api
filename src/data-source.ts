@@ -8,19 +8,14 @@ import { User } from './entity/User';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
+  host: process.env.POSTGRES_HOSTNAME,
   port: 5432,
-  username: 'jadensmith',
-  password: '123pass123',
-  database: 'unsplashdb_dev',
-  // host: process.env.POSTGRES_HOSTNAME,
-  // username: process.env.POSTGRES_USERNAME,
-  // password: process.env.POSTGRES_PASSWORD,
-  // database: process.env.POSTGRES_DATABASE,
+  username: process.env.POSTGRES_USERNAME,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DATABASE,
   synchronize: false,
   logging: true,
   entities: [User, Author, Photo, PhotoMetadata, Album],
-  //migrations: ['src/migrations/*.{ts, js}'],
   migrations: ['src/migration/**/*.ts'],
   subscribers: [],
 });
