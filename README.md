@@ -15,11 +15,11 @@ This is a minimalistic Express.js application leveraging TypeORM and TS.
 1. Clone the repository: `git clone <repository-url>`
 2. Install the dependencies: `npm install`
 3. Create a `.env` file in the root directory and set the necessary environment variables (see `.env.example` for reference).
-4. Start the application: `npm start`
+4. Start the application: `npm run start:dev`
 
 ## Usage
 
-To start the server, run `npm start`. The server will start on `http://localhost:3000`.
+To start the dev server, run `npm run start:dev`. The Express.js server will listen on `http://localhost:3000`.
 
 ## API Documentation
 
