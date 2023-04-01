@@ -14,9 +14,11 @@ export class UserController {
         select: ['id', 'username', 'role', 'author', 'createdAt', 'email'],
       });
 
-      res.status(200).json(users);
+      return res.status(200).json(users);
     } catch (error) {
-      res.status(404).json({ message: ERROR_MESSAGES.REQUEST_NOT_FOUND });
+      return res
+        .status(404)
+        .json({ message: ERROR_MESSAGES.REQUEST_NOT_FOUND });
     }
   };
 
@@ -40,9 +42,11 @@ export class UserController {
       }
 
       await userRepository.save(user);
-      res.json(user);
+      return res.json(user);
     } catch (error) {
-      res.status(404).json({ message: ERROR_MESSAGES.REQUEST_NOT_FOUND });
+      return res
+        .status(404)
+        .json({ message: ERROR_MESSAGES.REQUEST_NOT_FOUND });
     }
   };
 }
