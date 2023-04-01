@@ -34,6 +34,12 @@ This API follows the RESTful API design principles and utilizes the following HT
 
 List the resources available in the API and their descriptions.
 
+#### Unsplash API Swagger
+
+| Method | Endpoint    | Description               |
+| ------ | ----------- | ------------------------- |
+| GET    | `/api-docs` | Swagger API documentation |
+
 #### Photo Controller
 
 | Method | Endpoint                          | Description                     |
