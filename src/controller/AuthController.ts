@@ -86,12 +86,11 @@ export class AuthController {
       const { oldPassword, newPassword, username } = req.body;
 
       if (!(oldPassword && newPassword)) {
-        res.status(401).json({
+        return res.status(401).json({
           error: {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
         });
-        return;
       }
 
       // Get user from the database
@@ -111,24 +110,21 @@ export class AuthController {
       );
 
       if (!isPasswordValid) {
-        res.status(401).json({
+        return res.status(401).json({
           error: {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
         });
-
-        return;
       }
 
       // Hash the new password and save
       const newHashedPassword = await Bcrypt.hashPassword(newPassword);
       user.password = newHashedPassword;
-      console.log('Saving new user password.');
       await userRepository.save(user);
 
       res.status(200).json(user);
     } catch (error) {
-      res.status(401).json({
+      return res.status(401).json({
         error: {
           message: ERROR_MESSAGES.ACCESS_DENIED,
         },
