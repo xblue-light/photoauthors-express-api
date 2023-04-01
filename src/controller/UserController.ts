@@ -1,5 +1,5 @@
 import { AppDataSource } from '../data-source';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { User } from '../entity/User';
 import { validate } from 'class-validator';
 import { Bcrypt } from '../utils/Bcrypt';
@@ -10,7 +10,8 @@ export class UserController {
     try {
       const userRepository = AppDataSource.getRepository(User);
       const users = await userRepository.find({
-        select: ['id', 'username', 'role'],
+        relations: ['author'],
+        select: ['id', 'username', 'role', 'author', 'createdAt', 'email'],
       });
 
       res.status(200).send(users);

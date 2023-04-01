@@ -35,7 +35,7 @@
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "start:dev": "ts-node-dev src/index.ts",
-    "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migration/AdminUserNew",
+    "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migration/$MY_VAR",
     "migration:generate": "npx typeorm-ts-node-commonjs migration:generate -d ./src/data-source.ts src/migrations/ChangeUserNameField",
     "migration:run": "npx typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts"
   }
