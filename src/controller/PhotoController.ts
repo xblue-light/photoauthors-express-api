@@ -11,13 +11,10 @@ import { RESPONSE_STATUS } from '../utils/ResponseStatus';
 
 export class PhotoController {
   // Define the application data source repositories
-  static albumRepository: Repository<Album> =
-    AppDataSource.getRepository(Album);
-  static userRepository: Repository<User> = AppDataSource.getRepository(User);
-  static photoRepository: Repository<Photo> =
-    AppDataSource.getRepository(Photo);
-  static authorRepository: Repository<Author> =
-    AppDataSource.getRepository(Author);
+  static albumRepo: Repository<Album> = AppDataSource.getRepository(Album);
+  static userRepo: Repository<User> = AppDataSource.getRepository(User);
+  static photoRepo: Repository<Photo> = AppDataSource.getRepository(Photo);
+  static authorRepo: Repository<Author> = AppDataSource.getRepository(Author);
 
   static createNewPhoto = async (
     req: Request,
@@ -27,7 +24,7 @@ export class PhotoController {
       // get user.id from auth middleware
       const userId = req.user.userId;
 
-      const user = await this.userRepository.findOneOrFail({
+      const user = await this.userRepo.findOneOrFail({
         relations: ['author', 'author.photos', 'author.photos.metadata'],
         where: {
           id: userId,
@@ -72,7 +69,7 @@ export class PhotoController {
       newAlbum.name = album.name; // from req.body
 
       // Save new album
-      await this.albumRepository.insert(newAlbum);
+      await this.albumRepo.insert(newAlbum);
 
       // Attach album/s to the photo entity
       photo.albums = [newAlbum];
@@ -83,7 +80,7 @@ export class PhotoController {
         newAuthor.photos = [photo];
         user.author = newAuthor; // Here we connect the user with a new author hence userId will be a foreign key in author table
 
-        await this.userRepository.update(userId, {
+        await this.userRepo.update(userId, {
           author: newAuthor,
         });
 
@@ -93,11 +90,11 @@ export class PhotoController {
       user.author.photos = [...user.author.photos, photo];
 
       // Here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
-      await this.userRepository.save(user);
+      await this.userRepo.save(user);
 
       res.status(200).json({ status: RESPONSE_STATUS.CREATED });
     } catch (error) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -111,13 +108,13 @@ export class PhotoController {
   ): Response<Photo[]> => {
     try {
       // This will load all the user photos for all the users in the DB and all the photo entity relations.
-      const userPhotos = await this.photoRepository.find({
+      const userPhotos = await this.photoRepo.find({
         relations: ['metadata', 'author', 'author.user', 'albums'],
       });
 
       res.status(200).json(userPhotos);
     } catch (error) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -132,14 +129,14 @@ export class PhotoController {
     try {
       // gets all authors
       // console.log(
-      //   await this.authorRepository.find({
+      //   await this.authorRepo.find({
       //     relations: ['photos', 'user'],
       //   }),
       // );
 
       // get author by user id
       // console.log(
-      //   await this.authorRepository.find({
+      //   await this.authorRepo.find({
       //     relations: ['photos', 'user'],
       //     where: {
       //       user: {
@@ -149,7 +146,7 @@ export class PhotoController {
       //   }),
       // );
 
-      const allPhotosByUserId = await this.photoRepository.find({
+      const allPhotosByUserId = await this.photoRepo.find({
         relations: ['metadata', 'author', 'author.user', 'albums'],
         where: {
           author: {
@@ -163,7 +160,7 @@ export class PhotoController {
 
       res.status(200).json(allPhotosByUserId);
     } catch (err) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -178,7 +175,7 @@ export class PhotoController {
     try {
       const photoPayload: Partial<Photo> = req.body;
 
-      await this.photoRepository
+      await this.photoRepo
         .createQueryBuilder()
         .update(Photo)
         .set({ ...photoPayload })
@@ -187,7 +184,7 @@ export class PhotoController {
 
       res.status(200).json({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -197,18 +194,18 @@ export class PhotoController {
 
   static delete = async (req: Request, res: Response): Response<any> => {
     try {
-      const photo = await this.photoRepository.findOneOrFail({
+      const photo = await this.photoRepo.findOneOrFail({
         where: {
           id: req.params.photoId,
         },
       });
 
       // Delete the photo from the DB
-      await this.photoRepository.delete(photo);
+      await this.photoRepo.delete(photo);
 
       res.status(200).json({ status: RESPONSE_STATUS.REMOVED });
     } catch (error) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },
@@ -222,7 +219,7 @@ export class PhotoController {
   ): Response<any> => {
     try {
       const payload: Partial<Photo> = req.body;
-      await this.photoRepository
+      await this.photoRepo
         .createQueryBuilder()
         .update(PhotoMetadata)
         .set({ ...payload })
@@ -231,7 +228,7 @@ export class PhotoController {
 
       res.status(200).json({ status: RESPONSE_STATUS.UPDATED });
     } catch (error) {
-      res.status(404).json({
+      return res.status(404).json({
         error: {
           message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
         },

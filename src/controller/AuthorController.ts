@@ -23,14 +23,14 @@ export class AuthorController {
         await userRepository.save(user); // here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
         res.status(201).json(user);
       } else {
-        res.status(404).json({
+        return res.status(404).json({
           error: {
             message: ERROR_MESSAGES.REQUEST_NOT_FOUND,
           },
         });
       }
     } catch (err) {
-      res.status(401).json({
+      return res.status(401).json({
         error: {
           message: ERROR_MESSAGES.ACCESS_DENIED,
         },
@@ -58,9 +58,9 @@ export class AuthorController {
         await userRepository.save(user);
       }
 
-      res.status(201).json(user.author);
+      return res.status(201).json(user.author);
     } catch (error) {
-      res.status(401).json({
+      return res.status(401).json({
         error: {
           message: ERROR_MESSAGES.ACCESS_DENIED,
         },

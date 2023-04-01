@@ -16,7 +16,7 @@ export class AuthController {
       let { username, password } = req.body;
 
       if (!(username && password)) {
-        res.status(401).json({
+        return res.status(401).json({
           error: {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
@@ -34,7 +34,7 @@ export class AuthController {
       });
 
       if (!user) {
-        res.status(401).json({
+        return res.status(401).json({
           error: {
             message: ERROR_MESSAGES.ACCESS_DENIED,
           },
@@ -48,7 +48,7 @@ export class AuthController {
       );
 
       if (!isPasswordValid) {
-        res.status(401).json({
+        return res.status(401).json({
           error: {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
@@ -68,11 +68,11 @@ export class AuthController {
       );
 
       // json the JWT in the response
-      res.status(200).json({
+      return res.status(200).json({
         accessToken,
       });
     } catch (error) {
-      res.status(401).json({
+      return res.status(401).json({
         error: {
           message: ERROR_MESSAGES.ACCESS_DENIED,
         },
@@ -91,6 +91,7 @@ export class AuthController {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
         });
+        return;
       }
 
       // Get user from the database
@@ -115,10 +116,15 @@ export class AuthController {
             message: ERROR_MESSAGES.INVALID_CREDS,
           },
         });
+
+        return;
       }
 
       // Hash the new password and save
-      user.password = await Bcrypt.hashPassword(newPassword);
+      const newHashedPassword = await Bcrypt.hashPassword(newPassword);
+      user.password = newHashedPassword;
+      console.log('Saving new user password.');
+      await userRepository.save(user);
 
       res.status(200).json(user);
     } catch (error) {
