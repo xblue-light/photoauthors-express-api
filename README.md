@@ -36,26 +36,35 @@ List the resources available in the API and their descriptions.
 
 #### Photo Controller
 
-| Method | Endpoint           | Description         |
-| ------ | ------------------ | ------------------- |
-| GET    | `/getAll`          | Retrieve all photos |
-| POST   | `/new`             | Create resource     |
-| PUT    | `/update/:photoId` | Update resource     |
-| DELETE | `/delete/:photoId` | Delete resource     |
+| Method | Endpoint                          | Description                     |
+| ------ | --------------------------------- | ------------------------------- |
+| GET    | `/photo/getAll`                   | Retrieve all photos             |
+| GET    | `/photo/getAll/:userId`           | Retrieve all photos by userId   |
+| DELETE | `/photo/delete/:photoId`          | Delete photo by userId          |
+| PATCH  | `/photo/update/:photoId`          | Update photo by userId          |
+| PATCH  | `/photo/update/metadata/:photoId` | Update photo metadata by userId |
+| POST   | `/photo/new`                      | Create new photo resource       |
 
 #### Auth Controller
 
-| Method | Endpoint       | Description                |
-| ------ | -------------- | -------------------------- |
-| POST   | `/login`       | Login with user creds      |
-| POST   | `/newPassword` | Change user password login |
+| Method | Endpoint            | Description                      |
+| ------ | ------------------- | -------------------------------- |
+| POST   | `/auth/login`       | Login with user creds            |
+| POST   | `/auth/newPassword` | Change user password credentials |
 
 #### User Controller
 
-| Method | Endpoint  | Description     |
-| ------ | --------- | --------------- |
-| GET    | `/all`    | Get all users   |
-| POST   | `/create` | Create new user |
+| Method | Endpoint       | Description     |
+| ------ | -------------- | --------------- |
+| GET    | `/user/all`    | Get all users   |
+| POST   | `/user/create` | Create new user |
+
+#### Author Controller
+
+| Method | Endpoint             | Description         |
+| ------ | -------------------- | ------------------- |
+| POST   | `/author/new`        | Create a new author |
+| PATCH  | `/author/updateName` | Update author name  |
 
 ### Authentication
 
