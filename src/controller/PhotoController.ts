@@ -84,7 +84,7 @@ export class PhotoController {
           author: newAuthor,
         });
 
-        res.status(201).json(user);
+        return res.status(201).json(user);
       }
 
       user.author.photos = [...user.author.photos, photo];
@@ -92,7 +92,7 @@ export class PhotoController {
       // Here its enough to save the user so we dont need to explicitly save the author since User#author has cascade
       await this.userRepo.save(user);
 
-      res.status(200).json({ status: RESPONSE_STATUS.CREATED });
+      return res.status(200).json({ status: RESPONSE_STATUS.CREATED });
     } catch (error) {
       return res.status(404).json({
         error: {
