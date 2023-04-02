@@ -47,7 +47,7 @@ List the resources available in the API and their descriptions.
 | POST   | `/photo/new`                      | Create new photo resource        |
 | GET    | `/photo/getAll`                   | Retrieve all photos              |
 | GET    | `/photo/getAll/:userId`           | Retrieve all photos by userId    |
-| GET    | `/photo/get/:photoId`             | Retrieve all photos by photoId   |
+| GET    | `/photo/get/:photoId`             | Retrieve single photo by photoId |
 | PATCH  | `/photo/update/:photoId`          | Update photo by photoId          |
 | PATCH  | `/photo/update/metadata/:photoId` | Update photo metadata by photoId |
 | DELETE | `/photo/delete/:photoId`          | Delete photo by photoId          |
