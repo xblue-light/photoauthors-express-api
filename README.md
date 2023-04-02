@@ -1,4 +1,4 @@
-# Unsplash API
+# Photo Authors API
 
 This is a minimalistic Express.js application leveraging TypeORM and TS.
 
