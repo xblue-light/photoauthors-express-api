@@ -42,14 +42,15 @@ List the resources available in the API and their descriptions.
 
 #### Photo Controller
 
-| Method | Endpoint                          | Description                     |
-| ------ | --------------------------------- | ------------------------------- |
-| GET    | `/photo/getAll`                   | Retrieve all photos             |
-| GET    | `/photo/getAll/:userId`           | Retrieve all photos by userId   |
-| DELETE | `/photo/delete/:photoId`          | Delete photo by userId          |
-| PATCH  | `/photo/update/:photoId`          | Update photo by userId          |
-| PATCH  | `/photo/update/metadata/:photoId` | Update photo metadata by userId |
-| POST   | `/photo/new`                      | Create new photo resource       |
+| Method | Endpoint                          | Description                      |
+| ------ | --------------------------------- | -------------------------------- |
+| POST   | `/photo/new`                      | Create new photo resource        |
+| GET    | `/photo/getAll`                   | Retrieve all photos              |
+| GET    | `/photo/getAll/:userId`           | Retrieve all photos by userId    |
+| GET    | `/photo/get/:photoId`             | Retrieve all photos by photoId   |
+| PATCH  | `/photo/update/:photoId`          | Update photo by photoId          |
+| PATCH  | `/photo/update/metadata/:photoId` | Update photo metadata by photoId |
+| DELETE | `/photo/delete/:photoId`          | Delete photo by photoId          |
 
 #### Auth Controller
 
@@ -60,10 +61,10 @@ List the resources available in the API and their descriptions.
 
 #### User Controller
 
-| Method | Endpoint       | Description     |
-| ------ | -------------- | --------------- |
-| GET    | `/user/all`    | Get all users   |
-| POST   | `/user/create` | Create new user |
+| Method | Endpoint       | Description                                          |
+| ------ | -------------- | ---------------------------------------------------- |
+| GET    | `/user/all`    | Get all users (only for users with role: SUPER_USER) |
+| POST   | `/user/create` | Create new user                                      |
 
 #### Author Controller
 

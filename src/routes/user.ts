@@ -5,7 +5,11 @@ import { checkRole } from '../middleware/checkRole';
 
 const userRoutes: Router = Router();
 
-userRoutes.get('/all', [checkJWT, checkRole(['ADMIN'])], UserController.getAll);
-userRoutes.post('/create', [checkRole(['ADMIN'])], UserController.newUser);
+userRoutes.get(
+  '/all',
+  [checkJWT, checkRole(['SUPER_USER'])],
+  UserController.getAll,
+);
+userRoutes.post('/create', [checkRole(['SUPER_USER'])], UserController.newUser);
 
 export default userRoutes;
